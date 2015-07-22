@@ -18,9 +18,39 @@ namespace shaSum
                 Environment.Exit(1);
             }
             var fileName = args[0];
-            var hashFile = new HashFile(GetHashingAlgorithm());
-            var hash = hashFile.Calculate(fileName);
-            Console.WriteLine(string.Format("{0}: {1}", fileName, hash));
+            try {
+                var hashFile = new HashFile(GetHashingAlgorithm());
+                var hash = hashFile.Calculate(fileName);
+                Console.WriteLine(string.Format("{0}: {1}", fileName, hash));
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine("An exception occurred: {0}: {1}", ex.GetType().Name, ex.Message);
+                Console.Error.WriteLine(WriteException(ex));
+                Environment.Exit(1);
+            }
+
+            Environment.Exit(0);
+        }
+
+        static string WriteException(Exception exception)
+        {
+            if (exception != null)
+            {
+                StringBuilder error = new StringBuilder();
+                string stackTrace = exception.StackTrace;
+                do
+                {
+                    error.AppendLine(string.Format("{0}: {1}", exception.GetType().Name, exception.Message));
+
+                    exception = exception.InnerException;
+                }
+                while (exception != null);
+
+                error.AppendLine("stack trace:" + stackTrace);
+                return error.ToString();
+            }
+            return string.Empty;
         }
 
         static HashAlgorithm GetHashingAlgorithm(string hashName = "sha256")

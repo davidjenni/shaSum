@@ -20,9 +20,9 @@ namespace shaSum
         public string Calculate(string fileName)
         {
             string fullPathFileName = Path.GetFullPath(fileName);
-            if (!File.Exists(fileName))
+            if (!File.Exists(fullPathFileName))
             {
-                throw new ArgumentException("File '{0}' not found.", fullPathFileName);
+                throw new InvalidOperationException(string.Format("File '{0}' not found.", fullPathFileName));
             }
             using (var fileStream = new FileStream(fullPathFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
